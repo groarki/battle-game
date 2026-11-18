@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, Platform, StyleSheet, Text, View } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import { useAppActive } from '../hooks/useAppActive';
+import { useBattleSounds } from '../hooks/useBattleSounds';
 import { useMoveGestures } from '../hooks/useMoveGestures';
 import { ENEMIES, HERO, applyDamage } from '../logic/characters';
 import { GameState, createNewGame } from '../logic/gameState';
@@ -22,6 +23,7 @@ export default function Battle({ initial }: Props) {
   const [game, setGame] = useState(initial);
   const { enemyType, enemyStamina, enemyPose, heroStamina, phase, round, playerMove, log, outcome } = game;
   const appActive = useAppActive();
+  const { playEnemyAppear, playSword, playMonsterHurt, playHeroHurt } = useBattleSounds();
 
   const enemy = ENEMIES[enemyType];
 
@@ -32,11 +34,13 @@ export default function Battle({ initial }: Props) {
   }, [game]);
 
   function startRound() {
+    if (round === 0) playEnemyAppear(enemyType);
     update({ round: round + 1, playerMove: null, enemyPose: 'idle', phase: 'playerTurn' });
   }
 
   function handlePlayerMove(move: Move) {
     if (phase !== 'playerTurn') return;
+    if (move !== 'block') playSword();
     update({ playerMove: move, enemyPose: 'idle', phase: 'enemyTurn' });
   }
 
@@ -63,6 +67,9 @@ export default function Battle({ initial }: Props) {
       const hit = applyDamage(playerWon ? enemyStamina : heroStamina, hitPoints);
       const ending = hit.dead ? 'koniec walki!' : 'zaczyna się nowa runda';
 
+      if (playerWon) playMonsterHurt();
+      else playHeroHurt();
+
       update({
         ...(playerWon
           ? { enemyStamina: hit.stamina, enemyPose: 'hurt' }
@@ -74,7 +81,7 @@ export default function Battle({ initial }: Props) {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [phase, playerMove, round, heroStamina, enemyStamina, enemy, log, appActive]);
+  }, [phase, playerMove, round, heroStamina, enemyStamina, enemy, log, appActive, playMonsterHurt, playHeroHurt]);
 
   function restart() {
     setGame(createNewGame(game.gameId + 1));
