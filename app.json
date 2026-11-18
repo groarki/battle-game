@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Lab4",
-    "slug": "Lab4",
+    "name": "Battle Game",
+    "slug": "battle-game",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

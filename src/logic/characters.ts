@@ -5,7 +5,7 @@ export type CharacterStats = {
 };
 
 export const HERO: CharacterStats = {
-  name: 'Bohater',
+  name: 'Ty',
   strength: 3,
   maxStamina: 30,
 };
