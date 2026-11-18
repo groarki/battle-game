@@ -13,7 +13,6 @@ export default function GestureHints({ activeMove = null }: Props) {
         const active = move === activeMove;
         return (
           <View key={move} style={[styles.card, active && styles.cardActive]}>
-            <Text style={styles.icon}>{info.icon}</Text>
             <Text style={styles.name}>{info.name}</Text>
             <Text style={styles.gesture}>{info.gesture}</Text>
             <Text style={styles.beats}>pokonuje: {MOVE_INFO[info.beats].name}</Text>
@@ -28,7 +27,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 20,
+  
   },
   card: {
     flex: 1,

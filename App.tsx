@@ -1,32 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import GestureHints from './src/components/GestureHints';
-import { useMoveGestures } from './src/hooks/useMoveGestures';
-import { MOVE_INFO, Move } from './src/logic/moves';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Battle from './src/components/Battle';
+import { GameState, createNewGame } from './src/logic/gameState';
+import { loadGame } from './src/storage/gameStorage';
 
 export default function App() {
-  const [lastMove, setLastMove] = useState<Move | null>(null);
-  const gesture = useMoveGestures(setLastMove);
+  const [initialGame, setInitialGame] = useState<GameState | null>(null);
+
+  useEffect(() => {
+    loadGame().then((saved) => setInitialGame(saved ?? createNewGame()));
+  }, []);
 
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Test gestów</Text>
-
-        <GestureDetector gesture={gesture}>
-          <View style={styles.area}>
-            <Text style={styles.areaText}>
-              {lastMove ? `Rozpoznano: ${MOVE_INFO[lastMove].name}` : 'Wykonaj gest tutaj'}
-            </Text>
-          </View>
-        </GestureDetector>
-
-        <GestureHints activeMove={lastMove} />
-      </View>
-      <StatusBar style="auto" />
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={styles.root}>
+        <SafeAreaView style={styles.root} edges={['top', 'bottom']}>
+          {initialGame ? (
+            <Battle initial={initialGame} />
+          ) : (
+            <View style={styles.loading}>
+              <ActivityIndicator size="large" />
+            </View>
+          )}
+        </SafeAreaView>
+        <StatusBar style="auto" />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 
@@ -35,29 +37,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
+  loading: {
     flex: 1,
-    paddingTop: 60,
-    paddingBottom: 30,
-    gap: 16,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  area: {
-    flex: 1,
-    marginHorizontal: 8,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: '#999',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  areaText: {
-    fontSize: 18,
-    color: '#555',
   },
 });

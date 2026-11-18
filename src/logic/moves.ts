@@ -5,14 +5,13 @@ export const MOVES: Move[] = ['thrust', 'swing', 'block'];
 export type MoveInfo = {
   name: string;
   gesture: string;
-  icon: string;
   beats: Move;
 };
 
 export const MOVE_INFO: Record<Move, MoveInfo> = {
-  thrust: { name: 'Pchnięcie', gesture: 'Przesuń w górę', icon: '⬆️', beats: 'swing' },
-  swing: { name: 'Zamaszysty cios', gesture: 'Przesuń w prawo', icon: '➡️', beats: 'block' },
-  block: { name: 'Blok', gesture: 'Przytrzymaj', icon: '✋', beats: 'thrust' },
+  thrust: { name: 'Pchnięcie', gesture: 'Przesuń w górę', beats: 'swing' },
+  swing: { name: 'Zamaszysty cios', gesture: 'Przesuń w prawo', beats: 'block' },
+  block: { name: 'Blok', gesture: 'Przytrzymaj', beats: 'thrust' },
 };
 
 export type ExchangeResult = 'player' | 'enemy' | 'draw';

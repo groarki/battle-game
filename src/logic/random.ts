@@ -1,7 +1,7 @@
 import { ENEMY_TYPES, EnemyType } from './characters';
 import { MOVES, Move } from './moves';
 
-export function randomInt(min: number, max: number): number {
+function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
